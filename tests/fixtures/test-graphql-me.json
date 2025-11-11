@@ -1,0 +1,3 @@
+{
+  "query": "query Me { me { id email name createdAt } }"
+}

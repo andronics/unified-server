@@ -1,0 +1,10 @@
+{
+  "query": "mutation Register($input: RegisterInput!) { register(input: $input) { user { id email name } token expiresIn } }",
+  "variables": {
+    "input": {
+      "email": "graphql-test4@example.com",
+      "name": "GraphQL Test User 4",
+      "password": "Password123!"
+    }
+  }
+}

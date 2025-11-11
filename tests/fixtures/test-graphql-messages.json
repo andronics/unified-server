@@ -1,0 +1,7 @@
+{
+  "query": "query Messages($page: Int, $limit: Int) { messages(page: $page, limit: $limit) { edges { node { id content userId createdAt } cursor } pageInfo { page limit total totalPages hasNextPage hasPreviousPage } } }",
+  "variables": {
+    "page": 1,
+    "limit": 10
+  }
+}

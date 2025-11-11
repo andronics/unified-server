@@ -1,0 +1,9 @@
+{
+  "query": "mutation UpdateUser($id: ID!, $input: UpdateUserInput!) { updateUser(id: $id, input: $input) { id email name } }",
+  "variables": {
+    "id": "0c4092d7-9a32-47a1-a0ff-be61d0effb2b",
+    "input": {
+      "name": "GraphQL Test User Updated"
+    }
+  }
+}

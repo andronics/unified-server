@@ -1,0 +1,6 @@
+{
+  "query": "query User($id: ID!) { user(id: $id) { id email name createdAt } }",
+  "variables": {
+    "id": "0c4092d7-9a32-47a1-a0ff-be61d0effb2b"
+  }
+}
