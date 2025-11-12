@@ -20,6 +20,13 @@ export enum ErrorCode {
   RATE_LIMITED = 7,
   PAYLOAD_TOO_LARGE = 8,
 
+  // TCP protocol errors (10-19)
+  TCP_FRAME_TOO_LARGE = 10,
+  TCP_INVALID_FRAME = 11,
+  TCP_PROTOCOL_ERROR = 12,
+  TCP_CONNECTION_LIMIT = 13,
+  TCP_INVALID_MESSAGE_TYPE = 14,
+
   // Server errors (50-99)
   INTERNAL_ERROR = 50,
   DEPENDENCY_ERROR = 51,
@@ -45,6 +52,13 @@ export const ErrorMessages: Record<ErrorCode, string> = {
   [ErrorCode.RATE_LIMITED]: 'Too many requests',
   [ErrorCode.PAYLOAD_TOO_LARGE]: 'Request payload is too large',
 
+  // TCP protocol errors
+  [ErrorCode.TCP_FRAME_TOO_LARGE]: 'TCP frame exceeds maximum size',
+  [ErrorCode.TCP_INVALID_FRAME]: 'Invalid TCP frame format',
+  [ErrorCode.TCP_PROTOCOL_ERROR]: 'TCP protocol violation',
+  [ErrorCode.TCP_CONNECTION_LIMIT]: 'TCP connection limit reached',
+  [ErrorCode.TCP_INVALID_MESSAGE_TYPE]: 'Unknown TCP message type',
+
   // Server errors
   [ErrorCode.INTERNAL_ERROR]: 'Internal server error',
   [ErrorCode.DEPENDENCY_ERROR]: 'External dependency unavailable',
@@ -69,6 +83,13 @@ export const ErrorCodeToHttpStatus: Record<ErrorCode, number> = {
   [ErrorCode.CONFLICT]: 409,
   [ErrorCode.RATE_LIMITED]: 429,
   [ErrorCode.PAYLOAD_TOO_LARGE]: 413,
+
+  // TCP protocol errors
+  [ErrorCode.TCP_FRAME_TOO_LARGE]: 413,
+  [ErrorCode.TCP_INVALID_FRAME]: 400,
+  [ErrorCode.TCP_PROTOCOL_ERROR]: 400,
+  [ErrorCode.TCP_CONNECTION_LIMIT]: 503,
+  [ErrorCode.TCP_INVALID_MESSAGE_TYPE]: 400,
 
   // Server errors
   [ErrorCode.INTERNAL_ERROR]: 500,
