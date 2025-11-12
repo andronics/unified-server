@@ -1,8 +1,8 @@
 # Unified Multi-Protocol Server
 
-[![CI](https://github.com/YOUR_USERNAME/unified-server/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/unified-server/actions/workflows/ci.yml)
-[![CD](https://github.com/YOUR_USERNAME/unified-server/actions/workflows/cd.yml/badge.svg)](https://github.com/YOUR_USERNAME/unified-server/actions/workflows/cd.yml)
-[![codecov](https://codecov.io/gh/YOUR_USERNAME/unified-server/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/unified-server)
+[![CI](https://github.com/andronics/unified-server/actions/workflows/ci.yml/badge.svg)](https://github.com/andronics/unified-server/actions/workflows/ci.yml)
+[![CD](https://github.com/andronics/unified-server/actions/workflows/cd.yml/badge.svg)](https://github.com/andronics/unified-server/actions/workflows/cd.yml)
+[![codecov](https://codecov.io/gh/andronics/unified-server/branch/main/graph/badge.svg)](https://codecov.io/gh/andronics/unified-server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2%2B-blue)](https://www.typescriptlang.org/)
