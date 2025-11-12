@@ -83,11 +83,11 @@ export const ConfigSchema = z.object({
     path: z.string().default('/graphql'),
     playground: z.object({
       enabled: z.boolean().default(true),
-    }),
+    }).default({}),
     complexity: z.object({
       maxDepth: z.number().int().min(1).default(5),
       maxComplexity: z.number().int().min(1).default(1000),
-    }),
+    }).default({}),
     introspection: z.boolean().default(true),
   }).optional(),
 
