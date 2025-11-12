@@ -88,6 +88,18 @@ export interface AppConfig {
     };
     introspection: boolean;
   };
+
+  tcp?: {
+    enabled: boolean;
+    port: number;
+    host: string;
+    pingInterval: number;
+    pingTimeout: number;
+    maxConnectionsPerIp: number;
+    maxFrameSize: number;
+    keepAliveInterval: number;
+    maxConnections?: number;
+  };
 }
 
 /**

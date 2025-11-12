@@ -174,6 +174,17 @@ export class ConfigLoader {
         },
         introspection: this.envBool('GRAPHQL_INTROSPECTION_ENABLED', config.graphql?.introspection !== false),
       },
+      tcp: {
+        enabled: this.envBool('TCP_ENABLED', config.tcp?.enabled !== false),
+        port: this.envInt('TCP_PORT', config.tcp?.port || 3001),
+        host: process.env.TCP_HOST || config.tcp?.host || '0.0.0.0',
+        pingInterval: this.envInt('TCP_PING_INTERVAL', config.tcp?.pingInterval || 30000),
+        pingTimeout: this.envInt('TCP_PING_TIMEOUT', config.tcp?.pingTimeout || 60000),
+        maxConnectionsPerIp: this.envInt('TCP_MAX_CONNECTIONS_PER_IP', config.tcp?.maxConnectionsPerIp || 100),
+        maxFrameSize: this.envInt('TCP_MAX_FRAME_SIZE', config.tcp?.maxFrameSize || 1048576),
+        keepAliveInterval: this.envInt('TCP_KEEP_ALIVE_INTERVAL', config.tcp?.keepAliveInterval || 30000),
+        maxConnections: config.tcp?.maxConnections ? this.envInt('TCP_MAX_CONNECTIONS', config.tcp.maxConnections) : undefined,
+      },
     } as Partial<AppConfig>;
   }
 

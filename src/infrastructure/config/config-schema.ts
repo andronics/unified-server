@@ -90,6 +90,18 @@ export const ConfigSchema = z.object({
     }),
     introspection: z.boolean().default(true),
   }).optional(),
+
+  tcp: z.object({
+    enabled: z.boolean().default(true),
+    port: z.number().int().min(1).max(65535).default(3001),
+    host: z.string().default('0.0.0.0'),
+    pingInterval: z.number().int().min(1000).default(30000), // 30 seconds
+    pingTimeout: z.number().int().min(1000).default(60000), // 60 seconds
+    maxConnectionsPerIp: z.number().int().min(1).default(100),
+    maxFrameSize: z.number().int().min(1024).default(1048576), // 1MB
+    keepAliveInterval: z.number().int().min(1000).default(30000), // 30 seconds
+    maxConnections: z.number().int().min(1).optional(), // Optional total limit
+  }).optional(),
 });
 
 export type ValidatedConfig = z.infer<typeof ConfigSchema>;
