@@ -6,7 +6,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import { ConfigLoader, getConfig, resetConfig } from '../config-loader';
+import { ConfigLoader, getConfig, resetConfig, config } from '../config-loader';
 
 // Mock dependencies
 vi.mock('fs');
@@ -593,9 +593,7 @@ describe('ConfigLoader', () => {
       process.env.DB_PASSWORD = 'test_password';
       process.env.JWT_SECRET = 'test-secret-key-that-is-at-least-32-characters-long';
 
-      // Import config proxy
-      const { config } = require('../config-loader');
-
+      // Access config proxy (already imported at top)
       // Should load on first access
       expect(config.app.name).toBe('unified-server');
       expect(config.database.host).toBe('localhost');
