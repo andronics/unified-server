@@ -170,8 +170,8 @@ describe('Message Validators', () => {
   describe('CreateMessageSchema', () => {
     it('should validate valid message', () => {
       const input = {
-        userId: '123e4567-e89b-12d3-a456-426614174000',
         content: 'Test message',
+        recipientId: '123e4567-e89b-12d3-a456-426614174000',
       };
 
       const result = CreateMessageSchema.safeParse(input);
@@ -180,7 +180,7 @@ describe('Message Validators', () => {
 
     it('should reject invalid UUID', () => {
       const input = {
-        userId: 'invalid-uuid',
+        recipientId: 'invalid-uuid',
         content: 'Test message',
       };
 
@@ -190,7 +190,7 @@ describe('Message Validators', () => {
 
     it('should reject empty content', () => {
       const input = {
-        userId: '123e4567-e89b-12d3-a456-426614174000',
+        recipientId: '123e4567-e89b-12d3-a456-426614174000',
         content: '',
       };
 
@@ -200,7 +200,7 @@ describe('Message Validators', () => {
 
     it('should reject content exceeding max length', () => {
       const input = {
-        userId: '123e4567-e89b-12d3-a456-426614174000',
+        recipientId: '123e4567-e89b-12d3-a456-426614174000',
         content: 'a'.repeat(10001),
       };
 

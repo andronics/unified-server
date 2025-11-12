@@ -9,28 +9,58 @@
  */
 
 import { Plugin } from 'graphql-yoga';
-import { Counter, Histogram } from 'prom-client';
+import { Counter, Histogram, register } from 'prom-client';
 import { logger } from '@infrastructure/logging/logger';
 
-// Metrics
-const graphqlOperationsTotal = new Counter({
-  name: 'graphql_operations_total',
-  help: 'Total number of GraphQL operations',
-  labelNames: ['operation_type', 'operation_name', 'status'],
-});
+// Lazy initialization of metrics to avoid duplicate registration in tests
+let graphqlOperationsTotal: Counter<string> | undefined;
+let graphqlOperationDuration: Histogram<string> | undefined;
+let graphqlErrorsTotal: Counter<string> | undefined;
 
-const graphqlOperationDuration = new Histogram({
-  name: 'graphql_operation_duration_seconds',
-  help: 'GraphQL operation duration in seconds',
-  labelNames: ['operation_type', 'operation_name'],
-  buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5],
-});
+/**
+ * Get or create GraphQL metrics (singleton pattern)
+ */
+function getMetrics() {
+  if (!graphqlOperationsTotal) {
+    // Check if metrics already exist in registry
+    const existingOpsTotal = register.getSingleMetric('graphql_operations_total');
+    const existingOpsDuration = register.getSingleMetric('graphql_operation_duration_seconds');
+    const existingErrorsTotal = register.getSingleMetric('graphql_errors_total');
 
-const graphqlErrorsTotal = new Counter({
-  name: 'graphql_errors_total',
-  help: 'Total number of GraphQL errors',
-  labelNames: ['operation_type', 'operation_name', 'error_code'],
-});
+    if (existingOpsTotal && existingOpsDuration && existingErrorsTotal) {
+      // Reuse existing metrics
+      graphqlOperationsTotal = existingOpsTotal as Counter<string>;
+      graphqlOperationDuration = existingOpsDuration as Histogram<string>;
+      graphqlErrorsTotal = existingErrorsTotal as Counter<string>;
+    } else {
+      // Create new metrics
+      graphqlOperationsTotal = new Counter({
+        name: 'graphql_operations_total',
+        help: 'Total number of GraphQL operations',
+        labelNames: ['operation_type', 'operation_name', 'status'],
+      });
+
+      graphqlOperationDuration = new Histogram({
+        name: 'graphql_operation_duration_seconds',
+        help: 'GraphQL operation duration in seconds',
+        labelNames: ['operation_type', 'operation_name'],
+        buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5],
+      });
+
+      graphqlErrorsTotal = new Counter({
+        name: 'graphql_errors_total',
+        help: 'Total number of GraphQL errors',
+        labelNames: ['operation_type', 'operation_name', 'error_code'],
+      });
+    }
+  }
+
+  return {
+    operationsTotal: graphqlOperationsTotal!,
+    operationDuration: graphqlOperationDuration!,
+    errorsTotal: graphqlErrorsTotal!,
+  };
+}
 
 // Reserved for future use - field-level metrics
 // const graphqlFieldResolutionsTotal = new Counter({
@@ -53,9 +83,10 @@ export function createMetricsPlugin(): Plugin {
       return {
         onExecuteDone({ result }) {
           const duration = (Date.now() - startTime) / 1000;
+          const metrics = getMetrics();
 
           // Record duration
-          graphqlOperationDuration
+          metrics.operationDuration
             .labels(operationKind, operationType)
             .observe(duration);
 
@@ -66,7 +97,7 @@ export function createMetricsPlugin(): Plugin {
 
           // Record operation count
           const status = isError ? 'error' : 'success';
-          graphqlOperationsTotal
+          metrics.operationsTotal
             .labels(operationKind, operationType, status)
             .inc();
 
@@ -75,7 +106,7 @@ export function createMetricsPlugin(): Plugin {
             const errors = result.errors as any[];
             errors.forEach((error: any) => {
               const errorCode = (error.extensions?.code as string) || 'UNKNOWN';
-              graphqlErrorsTotal
+              metrics.errorsTotal
                 .labels(operationKind, operationType, errorCode)
                 .inc();
             });
