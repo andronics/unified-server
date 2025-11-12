@@ -22,6 +22,7 @@ import {
   initializeWebSocketServer,
   initializeEventBridge,
 } from '@application/websocket';
+import { createTcpServer, createTcpMessageHandler } from '@application/tcp';
 import { eventBus } from '@infrastructure/events/event-bus';
 
 /**
@@ -31,6 +32,7 @@ class Application {
   private isShuttingDown = false;
   private websocketServer: any = null;
   private eventBridge: any = null;
+  private tcpServer: any = null;
 
   /**
    * Initialize all dependencies
@@ -68,9 +70,24 @@ class Application {
         this.websocketServer = initializeWebSocketServer(connectionManager, messageHandler);
         await this.websocketServer.start(httpServer.getHttpServer());
 
-        // Initialize event bridge (EventBus → PubSub → WebSocket)
+        // Initialize event bridge (EventBus → PubSub → WebSocket/TCP)
         this.eventBridge = initializeEventBridge(eventBus, pubSubBroker);
         await this.eventBridge.start();
+      }
+
+      // Initialize and start TCP server (independent port)
+      if (config.tcp?.enabled) {
+        this.tcpServer = createTcpServer(config);
+        createTcpMessageHandler(this.tcpServer); // Sets up event listeners
+        await this.tcpServer.start();
+
+        logger.info(
+          {
+            port: config.tcp.port,
+            host: config.tcp.host,
+          },
+          'TCP server started'
+        );
       }
 
       // Start metrics server
@@ -84,6 +101,9 @@ class Application {
             api: `http://${config.app.host}:${config.app.port}/api`,
             websocket: config.websocket.enabled
               ? `ws://${config.app.host}:${config.app.port}/ws`
+              : 'disabled',
+            tcp: config.tcp?.enabled
+              ? `tcp://${config.tcp.host}:${config.tcp.port}`
               : 'disabled',
             health: `http://${config.app.host}:${config.app.port}/health`,
             metrics: config.metrics.enabled
@@ -115,6 +135,11 @@ class Application {
       // Stop event bridge first
       if (this.eventBridge) {
         await this.eventBridge.stop();
+      }
+
+      // Stop TCP server (close all connections gracefully)
+      if (this.tcpServer) {
+        await this.tcpServer.stop();
       }
 
       // Stop WebSocket server (close all connections gracefully)
