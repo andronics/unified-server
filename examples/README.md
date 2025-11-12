@@ -35,7 +35,7 @@ curl -X POST http://localhost:3000/api/auth/login \
     "password": "password123"
   }'
 
-# Save the accessToken from the response
+# Save the token from the response
 ```
 
 ### 3. Run the Example
