@@ -18,13 +18,13 @@ export default defineConfig({
       exclude: [
         'node_modules/',
         'dist/',
-        'tests/',
+        '**/__tests__/**',
         '**/*.test.ts',
         '**/*.spec.ts',
         'src/server.ts',
       ],
     },
-    setupFiles: ['./tests/setup.ts'],
+    setupFiles: ['./src/__tests__/setup.ts'],
     testTimeout: 10000,
   },
   resolve: {
