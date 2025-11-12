@@ -37,7 +37,7 @@ export const mutationResolvers = {
       const validatedInput = registerInputSchema.parse(args.input);
 
       // Create user
-      const user = await userService.createUser(validatedInput);
+      await userService.createUser(validatedInput);
 
       // Authenticate to get token
       const authResponse = await userService.authenticate({

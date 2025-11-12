@@ -3,7 +3,7 @@
  * Layer 1: Foundation
  */
 
-import { Request } from 'express';
+import { Request as ExpressRequest } from 'express';
 import { PublicUser } from './common-types';
 
 /**
@@ -15,8 +15,8 @@ export interface GraphQLContext {
   user?: PublicUser;
   /** Correlation ID for request tracking */
   correlationId: string;
-  /** Original Express request */
-  req: Request;
+  /** Original Express or Fetch API request */
+  req: ExpressRequest | Request;
 }
 
 /**

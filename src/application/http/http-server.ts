@@ -24,6 +24,7 @@ import healthRoutes from './routes/health-routes';
 
 // GraphQL
 import { createGraphQLServer } from '../graphql/graphql-server';
+import { initializeEventBridge } from '../graphql/event-bridge';
 
 /**
  * HTTP Server class
@@ -103,12 +104,17 @@ export class HttpServer {
     if (config.graphql?.enabled) {
       const graphqlServer = createGraphQLServer();
       this.app.use(config.graphql.path || '/graphql', graphqlServer);
+
+      // Initialize event bridge for GraphQL subscriptions
+      initializeEventBridge();
+
       logger.info(
         {
           path: config.graphql.path || '/graphql',
           playground: config.graphql.playground?.enabled ?? true,
+          subscriptions: 'enabled',
         },
-        'GraphQL endpoint mounted'
+        'GraphQL endpoint mounted with subscriptions'
       );
     }
 

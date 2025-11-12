@@ -75,6 +75,19 @@ export interface AppConfig {
     maxConnectionsPerIp: number;
     maxMessageSize: number;
   };
+
+  graphql?: {
+    enabled: boolean;
+    path: string;
+    playground: {
+      enabled: boolean;
+    };
+    complexity: {
+      maxDepth: number;
+      maxComplexity: number;
+    };
+    introspection: boolean;
+  };
 }
 
 /**
