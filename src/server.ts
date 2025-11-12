@@ -11,18 +11,18 @@ import {
   logUncaughtException,
   logUnhandledRejection,
 } from '@infrastructure/logging/logger';
-import { database } from '@integration/database/connection-pool';
-import { redisClient } from '@integration/cache/redis-client';
+import { database } from '@infrastructure/database/connection-pool';
+import { redisClient } from '@infrastructure/cache/redis-client';
 import { pubSubBroker } from '@infrastructure/pubsub/pubsub-broker';
-import { httpServer } from '@application/http/http-server';
-import { metricsServer } from '@application/metrics-server';
+import { httpServer } from '@protocols/http/http-server';
+import { metricsServer } from '@infrastructure/metrics/metrics-server';
 import {
   connectionManager,
   initializeMessageHandler,
   initializeWebSocketServer,
   initializeEventBridge,
-} from '@application/websocket';
-import { createTcpServer, createTcpMessageHandler } from '@application/tcp';
+} from '@protocols/websocket';
+import { createTcpServer, createTcpMessageHandler } from '@protocols/tcp';
 import { eventBus } from '@infrastructure/events/event-bus';
 
 /**

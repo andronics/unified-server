@@ -19,9 +19,13 @@ export * from './pubsub/topic-matcher';
 export * from './pubsub/adapters/memory-adapter';
 export * from './pubsub/adapters/redis-adapter';
 
-// Auth
-export * from './auth/password-service';
-export * from './auth/jwt-service';
-
 // Metrics
 export * from './metrics/metrics';
+
+// Database
+export * from './database/connection-pool';
+export * from './database/repositories/user-repository';
+export * from './database/repositories/message-repository';
+
+// Cache
+export * from './cache/redis-client';

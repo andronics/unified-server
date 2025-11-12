@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import { ConfigSchema, ValidatedConfig } from './config-schema';
-import { AppConfig } from '@foundation/types/config-types';
+import { AppConfig } from '@shared/types/config-types';
 
 /**
  * Configuration loader class

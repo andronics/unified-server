@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { PasswordService } from '@infrastructure/auth/password-service';
+import { PasswordService } from '@domain/auth/password-service';
 
 describe('PasswordService', () => {
   let passwordService: PasswordService;

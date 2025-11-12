@@ -3,10 +3,10 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { database } from '@integration/database/connection-pool';
-import { userRepository } from '@integration/database/repositories/user-repository';
-import { messageRepository } from '@integration/database/repositories/message-repository';
-import { ApiError } from '@foundation/errors/api-error';
+import { database } from '@infrastructure/database/connection-pool';
+import { userRepository } from '@infrastructure/database/repositories/user-repository';
+import { messageRepository } from '@infrastructure/database/repositories/message-repository';
+import { ApiError } from '@shared/errors/api-error';
 
 describe('Database Repositories', () => {
   beforeAll(async () => {

@@ -12,7 +12,7 @@ import {
   PubSubMessage,
   PubSubHandler,
   PubSubSubscription,
-} from '@foundation/types/pubsub-types';
+} from '@shared/types/pubsub-types';
 import { topicMatcher } from '../topic-matcher';
 import { logger } from '@infrastructure/logging/logger';
 

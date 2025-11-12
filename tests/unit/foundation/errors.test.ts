@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { ApiError, isApiError } from '@foundation/errors/api-error';
-import { ErrorCode } from '@foundation/errors/error-codes';
+import { ApiError, isApiError } from '@shared/errors/api-error';
+import { ErrorCode } from '@shared/errors/error-codes';
 
 describe('ApiError', () => {
   describe('Constructor', () => {

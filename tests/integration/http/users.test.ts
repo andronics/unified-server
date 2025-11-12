@@ -5,9 +5,9 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import request from 'supertest';
 import { Express } from 'express';
-import { httpServer } from '@application/http/http-server';
-import { database } from '@integration/database/connection-pool';
-import { redisClient } from '@integration/cache/redis-client';
+import { httpServer } from '@protocols/http/http-server';
+import { database } from '@infrastructure/database/connection-pool';
+import { redisClient } from '@infrastructure/cache/redis-client';
 
 describe('Users API', () => {
   let app: Express;

@@ -4,7 +4,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EventBus } from '@infrastructure/events/event-bus';
-import type { UserCreatedEvent, MessageSentEvent } from '@foundation/types/event-types';
+import type { UserCreatedEvent, MessageSentEvent } from '@shared/types/event-types';
 
 describe('EventBus', () => {
   let eventBus: EventBus;

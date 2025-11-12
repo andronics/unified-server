@@ -9,13 +9,13 @@ import request from 'supertest';
 import WebSocket from 'ws';
 import type { Server } from 'http';
 import type { Express } from 'express';
-import { httpServer } from '@application/http/http-server';
-import { connectionManager } from '@application/websocket/connection-manager';
-import { initializeMessageHandler, initializeWebSocketServer, initializeEventBridge } from '@application/websocket';
+import { httpServer } from '@protocols/http/http-server';
+import { connectionManager } from '@protocols/websocket/connection-manager';
+import { initializeMessageHandler, initializeWebSocketServer, initializeEventBridge } from '@protocols/websocket';
 import { pubSubBroker } from '@infrastructure/pubsub/pubsub-broker';
 import { eventBus } from '@infrastructure/events/event-bus';
-import { database } from '@integration/database/connection-pool';
-import { redisClient } from '@integration/cache/redis-client';
+import { database } from '@infrastructure/database/connection-pool';
+import { redisClient } from '@infrastructure/cache/redis-client';
 
 describe('E2E User Journey Tests', () => {
   let server: Server;

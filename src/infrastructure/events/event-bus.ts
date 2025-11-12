@@ -7,7 +7,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { AppEvent, EventHandler, EventSubscription } from '@foundation/types/event-types';
+import { AppEvent, EventHandler, EventSubscription } from '@shared/types/event-types';
 import { logger } from '../logging/logger';
 
 /**

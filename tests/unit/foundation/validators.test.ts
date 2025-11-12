@@ -7,11 +7,11 @@ import {
   CreateUserSchema,
   UpdateUserSchema,
   AuthCredentialsSchema,
-} from '@foundation/validators/user-validator';
+} from '@domain/users/user.validator';
 import {
   CreateMessageSchema,
   GetMessagesSchema,
-} from '@foundation/validators/message-validator';
+} from '@domain/messages/message.validator';
 
 describe('User Validators', () => {
   describe('CreateUserSchema', () => {

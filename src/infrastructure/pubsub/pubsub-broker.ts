@@ -11,7 +11,7 @@ import {
   PubSubConfig,
   PubSubHandler,
   PubSubSubscription,
-} from '@foundation/types/pubsub-types';
+} from '@shared/types/pubsub-types';
 import { MemoryAdapter } from './adapters/memory-adapter';
 import { RedisAdapter } from './adapters/redis-adapter';
 import { logger } from '@infrastructure/logging/logger';

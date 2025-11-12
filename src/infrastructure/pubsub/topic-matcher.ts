@@ -7,7 +7,7 @@
  * - ** matches multiple segments (e.g., "messages.**" matches "messages.user.123.sent")
  */
 
-import { TopicMatcher as ITopicMatcher } from '@foundation/types/pubsub-types';
+import { TopicMatcher as ITopicMatcher } from '@shared/types/pubsub-types';
 
 export class TopicMatcher implements ITopicMatcher {
   /**

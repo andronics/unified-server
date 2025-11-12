@@ -29,10 +29,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@foundation': path.resolve(__dirname, './src/foundation'),
+      '@domain': path.resolve(__dirname, './src/domain'),
+      '@protocols': path.resolve(__dirname, './src/protocols'),
       '@infrastructure': path.resolve(__dirname, './src/infrastructure'),
-      '@integration': path.resolve(__dirname, './src/integration'),
-      '@application': path.resolve(__dirname, './src/application'),
+      '@shared': path.resolve(__dirname, './src/shared'),
     },
   },
 });

@@ -3,12 +3,12 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { MessageService } from '@application/services/message-service';
-import { MessageRepository } from '@integration/database/repositories/message-repository';
-import { UserRepository } from '@integration/database/repositories/user-repository';
+import { MessageService } from '@domain/messages/message.service';
+import { MessageRepository } from '@infrastructure/database/repositories/message-repository';
+import { UserRepository } from '@infrastructure/database/repositories/user-repository';
 import { EventBus } from '@infrastructure/events/event-bus';
-import { ApiError } from '@foundation/errors/api-error';
-import { Message } from '@foundation/types/common-types';
+import { ApiError } from '@shared/errors/api-error';
+import { Message } from '@shared/types/common-types';
 
 describe('MessageService', () => {
   let messageService: MessageService;

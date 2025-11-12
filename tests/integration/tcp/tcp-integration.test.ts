@@ -13,10 +13,10 @@
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
 import * as net from 'net';
-import { TcpServer } from '@application/tcp/tcp-server';
-import { TcpMessageHandler } from '@application/tcp/message-handler';
-import { ProtocolCodec } from '@application/tcp/protocol-codec';
-import { TcpMessageType } from '@foundation/types/tcp-types';
+import { TcpServer } from '@protocols/tcp/tcp-server';
+import { TcpMessageHandler } from '@protocols/tcp/message-handler';
+import { ProtocolCodec } from '@protocols/tcp/protocol-codec';
+import { TcpMessageType } from '@shared/types/tcp-types';
 import { ValidatedConfig } from '@infrastructure/config/config-schema';
 
 // Mock dependencies that don't need real implementations
@@ -35,7 +35,7 @@ vi.mock('@infrastructure/logging/logger', () => ({
   logUnhandledRejection: vi.fn(),
 }));
 
-vi.mock('@infrastructure/auth/jwt-service', () => ({
+vi.mock('@domain/auth/jwt-service', () => ({
   jwtService: {
     verifyToken: vi.fn((token: string) => {
       if (token === 'valid-token') {
@@ -47,7 +47,7 @@ vi.mock('@infrastructure/auth/jwt-service', () => ({
   },
 }));
 
-vi.mock('@integration/database/repositories/user-repository', () => ({
+vi.mock('@infrastructure/database/repositories/user-repository', () => ({
   userRepository: {
     findById: vi.fn((id: string) => {
       if (id === 'test-user-123') {

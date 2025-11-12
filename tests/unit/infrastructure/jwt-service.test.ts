@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { JwtService, JwtPayload } from '@infrastructure/auth/jwt-service';
-import { ApiError } from '@foundation/errors/api-error';
+import { JwtService, JwtPayload } from '@domain/auth/jwt-service';
+import { ApiError } from '@shared/errors/api-error';
 
 describe('JwtService', () => {
   let jwtService: JwtService;

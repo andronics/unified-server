@@ -3,13 +3,13 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { UserService } from '@application/services/user-service';
-import { UserRepository } from '@integration/database/repositories/user-repository';
-import { PasswordService } from '@infrastructure/auth/password-service';
-import { JwtService } from '@infrastructure/auth/jwt-service';
+import { UserService } from '@domain/users/user.service';
+import { UserRepository } from '@infrastructure/database/repositories/user-repository';
+import { PasswordService } from '@domain/auth/password-service';
+import { JwtService } from '@domain/auth/jwt-service';
 import { EventBus } from '@infrastructure/events/event-bus';
-import { ApiError } from '@foundation/errors/api-error';
-import { User } from '@foundation/types/common-types';
+import { ApiError } from '@shared/errors/api-error';
+import { User } from '@shared/types/common-types';
 
 describe('UserService', () => {
   let userService: UserService;

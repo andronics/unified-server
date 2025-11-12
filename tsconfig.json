@@ -19,10 +19,10 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@foundation/*": ["./src/foundation/*"],
+      "@domain/*": ["./src/domain/*"],
+      "@protocols/*": ["./src/protocols/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
-      "@integration/*": ["./src/integration/*"],
-      "@application/*": ["./src/application/*"]
+      "@shared/*": ["./src/shared/*"]
     }
   },
   "include": ["src/**/*"],
