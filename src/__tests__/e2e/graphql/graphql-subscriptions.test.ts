@@ -76,7 +76,6 @@ describe('GraphQL Subscriptions E2E', () => {
 
   describe('userCreated Subscription', () => {
     it('should receive userCreated events', async () => {
-      const events: any[] = [];
 
       const client: Client = createClient({
         url: serverAddress,
@@ -749,7 +748,8 @@ describe('GraphQL Subscriptions E2E', () => {
         `,
       });
 
-      const iterator = subscription[Symbol.asyncIterator]();
+      // Start iterator (but don't wait for it - testing cleanup)
+      subscription[Symbol.asyncIterator]();
 
       // Give subscription time to establish
       await new Promise((resolve) => setTimeout(resolve, 500));
