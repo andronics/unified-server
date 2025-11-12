@@ -38,6 +38,17 @@ export class MetricsService {
   public readonly authSuccessTotal: Counter;
   public readonly authFailuresTotal: Counter;
 
+  // TCP metrics
+  public readonly tcpConnectionsTotal: Counter;
+  public readonly tcpConnectionsActive: Gauge;
+  public readonly tcpMessagesReceived: Counter;
+  public readonly tcpMessagesSent: Counter;
+  public readonly tcpBytesReceived: Counter;
+  public readonly tcpBytesSent: Counter;
+  public readonly tcpFramesParsed: Counter;
+  public readonly tcpFrameErrors: Counter;
+  public readonly tcpMessageDuration: Histogram;
+
   constructor() {
     this.registry = new Registry();
 
@@ -164,6 +175,67 @@ export class MetricsService {
       name: 'auth_failures_total',
       help: 'Total number of failed authentications',
       labelNames: ['method', 'reason'],
+      registers: [this.registry],
+    });
+
+    // TCP metrics
+    this.tcpConnectionsTotal = new Counter({
+      name: 'tcp_connections_total',
+      help: 'Total number of TCP connections',
+      labelNames: ['status'],
+      registers: [this.registry],
+    });
+
+    this.tcpConnectionsActive = new Gauge({
+      name: 'tcp_connections_active',
+      help: 'Number of active TCP connections',
+      registers: [this.registry],
+    });
+
+    this.tcpMessagesReceived = new Counter({
+      name: 'tcp_messages_received_total',
+      help: 'Total number of TCP messages received',
+      labelNames: ['type'],
+      registers: [this.registry],
+    });
+
+    this.tcpMessagesSent = new Counter({
+      name: 'tcp_messages_sent_total',
+      help: 'Total number of TCP messages sent',
+      labelNames: ['type'],
+      registers: [this.registry],
+    });
+
+    this.tcpBytesReceived = new Counter({
+      name: 'tcp_bytes_received_total',
+      help: 'Total bytes received over TCP',
+      registers: [this.registry],
+    });
+
+    this.tcpBytesSent = new Counter({
+      name: 'tcp_bytes_sent_total',
+      help: 'Total bytes sent over TCP',
+      registers: [this.registry],
+    });
+
+    this.tcpFramesParsed = new Counter({
+      name: 'tcp_frames_parsed_total',
+      help: 'Total number of TCP frames successfully parsed',
+      registers: [this.registry],
+    });
+
+    this.tcpFrameErrors = new Counter({
+      name: 'tcp_frame_errors_total',
+      help: 'Total number of TCP frame parsing errors',
+      labelNames: ['error_type'],
+      registers: [this.registry],
+    });
+
+    this.tcpMessageDuration = new Histogram({
+      name: 'tcp_message_duration_seconds',
+      help: 'TCP message processing duration in seconds',
+      labelNames: ['type'],
+      buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1],
       registers: [this.registry],
     });
   }
