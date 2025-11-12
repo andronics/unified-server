@@ -431,18 +431,43 @@ Test files to create in `tests/e2e/`:
 
 **Deliverables**: ✅ GraphQL endpoint at /graphql with full security & monitoring
 
-#### Phase 4: Add TCP Raw Socket Server (1 week)
-**When**: IoT device integration needed
+#### Phase 4: Add TCP Raw Socket Server 🚧 IN PROGRESS (1 week)
+**Started**: 2025-11-12
+**Status**: Day 1-3 Complete (Foundation & Protocol)
 
 **Tasks**:
-- [ ] Binary protocol definition
-- [ ] TCP server with net module
-- [ ] Binary message serializer/deserializer
+- [x] Binary protocol definition (TCP types, message types, frames) ✅
+- [x] Binary message serializer/deserializer (protocol codec) ✅
+- [x] Frame parser for TCP stream handling ✅
+- [x] Connection manager (tracking, authentication, subscriptions) ✅
+- [ ] TCP server with net module (in progress)
+- [ ] Message handler with protocol routing
+- [ ] Event bridge (EventBus → PubSub → TCP)
 - [ ] TCP handler with PubSub integration
 - [ ] Connection limits and timeouts
-- [ ] Binary protocol tests
+- [ ] TCP configuration schema
+- [ ] TCP metrics (Prometheus)
+- [ ] Integration with main server
+- [ ] Binary protocol tests (unit, integration, E2E)
+- [ ] Documentation (protocol spec, README)
 
-**Deliverables**: TCP server on port 9000
+**Completed** (Days 1-3):
+- ✅ Foundation layer: TCP types (352 lines) + Error codes (5 new)
+- ✅ Protocol codec: Binary encoding/decoding (280 lines)
+- ✅ Frame parser: Stream-based parsing with fragmentation handling (200 lines)
+- ✅ Connection manager: Full connection lifecycle management (564 lines)
+- ✅ Total: ~1,400 lines production-ready code
+- ✅ 3 commits with detailed documentation
+
+**Remaining** (Days 4-7):
+- TCP server implementation
+- Message handler (routing by message type)
+- Event bridge (cross-protocol messaging)
+- Configuration and metrics
+- Integration and testing
+- Documentation updates
+
+**Deliverables**: TCP server on port 3001 with binary protocol
 
 #### Phase 5: Production Optimizations (Ongoing)
 - [ ] Load testing (Artillery or k6)
