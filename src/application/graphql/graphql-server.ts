@@ -10,6 +10,10 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { typeDefs } from './schema';
 import { resolvers } from './resolvers';
 import { buildGraphQLContext } from './context';
+import { authDirectiveTransformer, authDirectiveTypeDefs } from './directives/auth-directive';
+import { createComplexityPlugin } from './plugins/complexity-plugin';
+import { createDepthLimitPlugin } from './plugins/depth-limit-plugin';
+import { createMetricsPlugin } from './plugins/metrics-plugin';
 import { logger } from '@infrastructure/logging/logger';
 import { config } from '@infrastructure/config/config-loader';
 
@@ -17,10 +21,16 @@ import { config } from '@infrastructure/config/config-loader';
  * Create GraphQL schema with type definitions and resolvers
  */
 function createGraphQLSchema() {
-  return makeExecutableSchema({
-    typeDefs,
+  // Create base schema
+  let schema = makeExecutableSchema({
+    typeDefs: [authDirectiveTypeDefs, typeDefs],
     resolvers,
   });
+
+  // Apply @auth directive transformer
+  schema = authDirectiveTransformer(schema, 'auth');
+
+  return schema;
 }
 
 /**
@@ -37,6 +47,11 @@ export function createGraphQLServer() {
       const req = (ctx as any).req || ctx.request;
       return buildGraphQLContext(req);
     },
+    plugins: [
+      createDepthLimitPlugin(),
+      createComplexityPlugin(),
+      createMetricsPlugin(),
+    ],
     graphiql: config.graphql?.playground?.enabled ?? true,
     logging: {
       debug: (...args) => logger.debug({ args }, 'GraphQL debug'),
@@ -51,8 +66,13 @@ export function createGraphQLServer() {
     {
       path: config.graphql?.path ?? '/graphql',
       playground: config.graphql?.playground?.enabled ?? true,
+      security: {
+        maxDepth: config.graphql?.complexity?.maxDepth ?? 5,
+        maxComplexity: config.graphql?.complexity?.maxComplexity ?? 1000,
+        authDirective: 'enabled',
+      },
     },
-    'GraphQL server created'
+    'GraphQL server created with security plugins'
   );
 
   return yoga;
