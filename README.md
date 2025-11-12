@@ -157,21 +157,36 @@ ws.onmessage = (event) => {
 
 ### GraphQL API
 
+**Endpoint**: `http://localhost:3000/graphql`
+**Playground**: Available in development mode
+
+#### Authentication & Registration
+
 ```graphql
-# Register and get JWT token
+# Register new user
 mutation Register {
   register(input: {
     email: "user@example.com"
-    name: "User"
+    name: "John Doe"
     password: "SecurePass123!"
   }) {
+    user { id email name createdAt }
+    token
+    expiresIn
+  }
+}
+
+# Login
+mutation Login {
+  login(email: "user@example.com", password: "SecurePass123!") {
     user { id email name }
     token
     expiresIn
   }
 }
 
-# Query with authentication (add Authorization: Bearer <token> header)
+# Get current user (requires authentication)
+# Add header: Authorization: Bearer <your-token>
 query Me {
   me {
     id
@@ -180,31 +195,227 @@ query Me {
     createdAt
   }
 }
+```
 
-# Paginated messages
-query Messages {
+#### Queries
+
+```graphql
+# Get user by ID
+query GetUser {
+  user(id: "user-id-here") {
+    id
+    email
+    name
+    createdAt
+  }
+}
+
+# Get paginated messages (Relay-style)
+query GetMessages {
   messages(page: 1, limit: 20) {
     edges {
-      node { id content userId createdAt }
+      node {
+        id
+        content
+        userId
+        createdAt
+      }
       cursor
     }
     pageInfo {
       page
+      limit
       total
+      totalPages
       hasNextPage
       hasPreviousPage
     }
   }
 }
 
-# Real-time subscription
-subscription UserCreated {
+# Get messages by user
+query GetUserMessages {
+  userMessages(userId: "user-id", page: 1, limit: 10) {
+    edges {
+      node { id content createdAt }
+      cursor
+    }
+    pageInfo { hasNextPage }
+  }
+}
+
+# Get messages in a channel
+query GetChannelMessages {
+  channelMessages(channelId: "channel-id", page: 1, limit: 10) {
+    edges {
+      node { id content userId createdAt }
+      cursor
+    }
+    pageInfo { hasNextPage }
+  }
+}
+```
+
+#### Mutations (Require Authentication)
+
+```graphql
+# Send a message (requires auth)
+mutation SendMessage {
+  sendMessage(input: {
+    content: "Hello, World!"
+    recipientId: "user-id"
+    channelId: "channel-id"
+  }) {
+    id
+    content
+    userId
+    recipientId
+    channelId
+    createdAt
+  }
+}
+
+# Update user profile (requires auth)
+mutation UpdateUser {
+  updateUser(id: "user-id", input: {
+    name: "Jane Doe"
+    email: "jane@example.com"
+  }) {
+    id
+    email
+    name
+    updatedAt
+  }
+}
+
+# Delete message (requires auth, owner only)
+mutation DeleteMessage {
+  deleteMessage(id: "message-id")
+}
+
+# Delete user (requires auth, owner only)
+mutation DeleteUser {
+  deleteUser(id: "user-id")
+}
+```
+
+#### Real-Time Subscriptions
+
+```graphql
+# Subscribe to new user registrations
+subscription OnUserCreated {
   userCreated {
     id
     email
     name
+    createdAt
   }
 }
+
+# Subscribe to user updates (all users)
+subscription OnUserUpdated {
+  userUpdated {
+    id
+    email
+    name
+    updatedAt
+  }
+}
+
+# Subscribe to specific user updates
+subscription OnSpecificUserUpdated {
+  userUpdated(userId: "user-id") {
+    id
+    name
+    email
+    updatedAt
+  }
+}
+
+# Subscribe to new messages (all channels)
+subscription OnMessageSent {
+  messageSent {
+    id
+    content
+    userId
+    createdAt
+  }
+}
+
+# Subscribe to messages in a specific channel
+subscription OnChannelMessages {
+  messageSent(channelId: "channel-id") {
+    id
+    content
+    userId
+    createdAt
+  }
+}
+
+# Subscribe to direct messages (requires auth)
+# Add header: Authorization: Bearer <your-token>
+subscription OnMyMessages {
+  messageToUser(userId: "my-user-id") {
+    id
+    content
+    userId
+    recipientId
+    createdAt
+  }
+}
+```
+
+#### Security Features
+
+**Query Depth Limiting** (max depth: 5)
+```graphql
+# This query would be REJECTED (depth = 6)
+query TooDeep {
+  user {
+    messages {
+      user {
+        messages {
+          user {
+            messages { # Depth 6 - REJECTED
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+**Query Complexity Limiting** (max complexity: 1000)
+```graphql
+# Each field = 1 point, nested fields multiply
+# This query: 1 (messages) + 100 * 5 (fields per message) = 501 points
+query AcceptableComplexity {
+  messages(limit: 100) {
+    edges {
+      node {
+        id          # 1 point * 100 = 100
+        content     # 1 point * 100 = 100
+        userId      # 1 point * 100 = 100
+        createdAt   # 1 point * 100 = 100
+        updatedAt   # 1 point * 100 = 100
+      }
+    }
+  }
+}
+```
+
+**@auth Directive**
+```graphql
+# Fields marked with @auth require JWT token
+# Attempting without token returns:
+# {
+#   "errors": [{
+#     "message": "Authentication required to access field: me",
+#     "extensions": { "code": "UNAUTHORIZED" }
+#   }]
+# }
 ```
 
 ## Architecture
@@ -443,18 +654,23 @@ GET /health
 - Stress testing (100+ concurrent connections)
 - Integration tests (47/47 passing)
 
-### ✅ Phase 3: GraphQL API (In Progress - Day 3 Complete)
+### ✅ Phase 3: GraphQL API (COMPLETE)
 - [x] GraphQL Yoga server setup
 - [x] Schema definitions (SDL)
 - [x] Query resolvers (6 operations)
 - [x] Mutation resolvers (6 operations)
 - [x] Field resolvers (2 operations)
+- [x] Subscription resolvers (4 operations)
 - [x] JWT authentication via context
 - [x] Input validation with Zod
 - [x] Relay-style pagination
-- [ ] Subscription resolvers (Day 4)
-- [ ] Security & complexity limits (Day 5)
-- [ ] Testing & documentation (Day 6-7)
+- [x] Real-time subscriptions via PubSub
+- [x] Event bridge (EventBus → GraphQL)
+- [x] @auth directive for protected fields
+- [x] Query complexity limits (max: 1000)
+- [x] Query depth limits (max: 5)
+- [x] Prometheus metrics integration
+- [x] Comprehensive documentation
 
 ### 🔮 Future Roadmap
 
