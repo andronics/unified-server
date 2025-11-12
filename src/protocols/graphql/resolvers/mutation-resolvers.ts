@@ -87,67 +87,57 @@ export const mutationResolvers = {
 
   /**
    * Update user profile
+   * Operates on the authenticated user (no ID parameter needed)
    * Requires authentication
    */
   updateUser: async (
     _parent: any,
-    args: { id: string; input: UpdateUserInput },
+    args: { input: UpdateUserInput },
     context: GraphQLContext
   ) => {
-    logger.info(
-      { userId: args.id, correlationId: context.correlationId },
-      'GraphQL Mutation: updateUser'
-    );
-
     if (!context.user) {
       throw ApiError.unauthorized('Authentication required');
     }
 
-    // Validate input
-    const validatedId = uuidSchema.parse(args.id);
-    const validatedInput = updateUserInputSchema.parse(args.input);
-
-    // Users can only update their own profile
-    if (context.user.id !== validatedId) {
-      throw ApiError.forbidden('You can only update your own profile');
-    }
+    logger.info(
+      { userId: context.user.id, correlationId: context.correlationId },
+      'GraphQL Mutation: updateUser'
+    );
 
     try {
-      const updatedUser = await userService.updateUser(validatedId, validatedInput);
+      // Validate input
+      const validatedInput = updateUserInputSchema.parse(args.input);
+
+      // Update the authenticated user's profile
+      const updatedUser = await userService.updateUser(context.user.id, validatedInput);
       return updatedUser;
     } catch (error) {
-      logger.error({ error, userId: args.id }, 'Failed to update user');
+      logger.error({ error, userId: context.user.id }, 'Failed to update user');
       throw error;
     }
   },
 
   /**
    * Delete user account
+   * Deletes the authenticated user's account (no ID parameter needed)
    * Requires authentication
    */
-  deleteUser: async (_parent: any, args: { id: string }, context: GraphQLContext) => {
-    logger.info(
-      { userId: args.id, correlationId: context.correlationId },
-      'GraphQL Mutation: deleteUser'
-    );
-
+  deleteUser: async (_parent: any, _args: any, context: GraphQLContext) => {
     if (!context.user) {
       throw ApiError.unauthorized('Authentication required');
     }
 
-    // Validate input
-    const validatedId = uuidSchema.parse(args.id);
-
-    // Users can only delete their own account
-    if (context.user.id !== validatedId) {
-      throw ApiError.forbidden('You can only delete your own account');
-    }
+    logger.info(
+      { userId: context.user.id, correlationId: context.correlationId },
+      'GraphQL Mutation: deleteUser'
+    );
 
     try {
-      await userService.deleteUser(validatedId);
+      // Delete the authenticated user's account
+      await userService.deleteUser(context.user.id);
       return true;
     } catch (error) {
-      logger.error({ error, userId: args.id }, 'Failed to delete user');
+      logger.error({ error, userId: context.user.id }, 'Failed to delete user');
       throw error;
     }
   },

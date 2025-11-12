@@ -143,15 +143,17 @@ export const typeDefs = /* GraphQL */ `
 
     """
     Update user profile
+    Operates on the authenticated user
     Requires authentication
     """
-    updateUser(id: ID!, input: UpdateUserInput!): User! @auth
+    updateUser(input: UpdateUserInput!): User! @auth
 
     """
     Delete user account
+    Deletes the authenticated user's account
     Requires authentication
     """
-    deleteUser(id: ID!): Boolean! @auth
+    deleteUser: Boolean! @auth
 
     """
     Send a new message
