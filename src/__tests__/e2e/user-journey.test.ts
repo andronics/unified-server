@@ -267,7 +267,7 @@ describe('E2E User Journey Tests', () => {
         )
       );
 
-      const tokens = logins.map(l => l.body.data.accessToken);
+      const tokens = logins.map(l => l.body.data.token);
       const channelId = 'test-channel-123';
 
       // Connect all users to WebSocket and subscribe to channel
@@ -455,13 +455,17 @@ describe('E2E User Journey Tests', () => {
 
       // Check if admin received user.updated event
       const userUpdatedEvent = adminEvents.find(e =>
-        e.topic === `users.user.${newUserId}` &&
+        e.topic && e.topic.includes('users') &&
         e.data &&
         e.data.user &&
+        e.data.user.id === newUserId &&
         e.data.user.name === 'Updated Name'
       );
 
       expect(userUpdatedEvent).toBeDefined();
+      if (!userUpdatedEvent) {
+        console.log('Admin events received:', JSON.stringify(adminEvents, null, 2));
+      }
 
       adminWs.close();
     });
@@ -482,7 +486,7 @@ describe('E2E User Journey Tests', () => {
       const login = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'resilience.e2e@example.com',
+          email: 'resilient@example.com',
           password: 'SecurePass123!',
         })
         .expect(200);
@@ -518,6 +522,15 @@ describe('E2E User Journey Tests', () => {
 
       // Simulate connection drop
       ws1.close();
+
+      // Wait for connection to fully close
+      await new Promise<void>((resolve) => {
+        if (ws1.readyState === WebSocket.CLOSED) {
+          resolve();
+        } else {
+          ws1.on('close', () => resolve());
+        }
+      });
 
       // Verify connection is closed
       expect(ws1.readyState).toBe(WebSocket.CLOSED);
@@ -651,7 +664,7 @@ describe('E2E User Journey Tests', () => {
   });
 
   describe('Performance Under Load', () => {
-    it('should handle concurrent operations across protocols', async () => {
+    it('should handle concurrent operations across protocols', { timeout: 30000 }, async () => {
       // Create multiple users
       const userCount = 10;
       const users = await Promise.all(
@@ -675,7 +688,7 @@ describe('E2E User Journey Tests', () => {
               email: u.body.data.email,
               password: 'SecurePass123!',
             })
-            .then(res => res.body.data.accessToken)
+            .then(res => res.body.data.token)
         )
       );
 

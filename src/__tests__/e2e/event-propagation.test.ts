@@ -58,6 +58,8 @@ describe('E2E Event Propagation Tests', () => {
   });
 
   beforeEach(async () => {
+    // Close all existing WebSocket connections to ensure test isolation
+    await connectionManager.closeAll();
     await database.query('DELETE FROM messages');
     await database.query('DELETE FROM users');
   });
@@ -419,9 +421,22 @@ describe('E2E Event Propagation Tests', () => {
         .filter(e => e.data && e.data.message)
         .map(e => e.data.message.content);
 
+      // Ensure we received all messages
+      expect(receivedMessages.length).toBe(messageCount);
+
+      // Check ordering (Message 0, Message 1, Message 2, etc.)
       for (let i = 0; i < receivedMessages.length - 1; i++) {
-        const current = parseInt(receivedMessages[i].split(' ')[1]);
-        const next = parseInt(receivedMessages[i + 1].split(' ')[1]);
+        const currentParts = receivedMessages[i].split(' ');
+        const nextParts = receivedMessages[i + 1].split(' ');
+
+        expect(currentParts.length).toBe(2); // "Message" "N"
+        expect(nextParts.length).toBe(2);
+
+        const current = parseInt(currentParts[1], 10);
+        const next = parseInt(nextParts[1], 10);
+
+        expect(Number.isNaN(current)).toBe(false);
+        expect(Number.isNaN(next)).toBe(false);
         expect(next).toBeGreaterThan(current);
       }
 
@@ -508,14 +523,10 @@ describe('E2E Event Propagation Tests', () => {
             topic: topic,
           }));
         } else if (message.type === 'subscribed') {
-          // Continue collecting events
-          ws.on('message', (data) => {
-            const msg = JSON.parse(data.toString());
-            if (msg.type === 'message') {
-              eventCollector.push(msg);
-            }
-          });
           resolve(ws);
+        } else if (message.type === 'message') {
+          // Collect events in the same handler (avoid duplicate listeners)
+          eventCollector.push(message);
         }
       });
 

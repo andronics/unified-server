@@ -138,25 +138,28 @@ export class EventBridge {
       );
 
       // Determine topics to publish to based on message type
-      const topics: string[] = [];
+      // Use Set to avoid duplicate topics when sender === recipient
+      const topicsSet = new Set<string>();
 
       // Always publish to general messages topic
-      topics.push('messages');
+      topicsSet.add('messages');
 
       // Publish to user-specific topic (for sender)
       if (message.userId) {
-        topics.push(`messages.user.${message.userId}`);
+        topicsSet.add(`messages.user.${message.userId}`);
       }
 
       // Publish to recipient-specific topic (for direct messages)
       if (message.recipientId) {
-        topics.push(`messages.user.${message.recipientId}`);
+        topicsSet.add(`messages.user.${message.recipientId}`);
       }
 
       // Publish to channel-specific topic (for channel messages)
       if (message.channelId) {
-        topics.push(`messages.channel.${message.channelId}`);
+        topicsSet.add(`messages.channel.${message.channelId}`);
       }
+
+      const topics = Array.from(topicsSet);
 
       // Publish to all relevant topics - preserve the event structure
       for (const topic of topics) {

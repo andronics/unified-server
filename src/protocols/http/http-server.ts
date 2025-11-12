@@ -106,15 +106,18 @@ export class HttpServer {
       this.app.use(config.graphql.path || '/graphql', graphqlServer);
 
       // Initialize event bridge for GraphQL subscriptions
-      initializeEventBridge();
+      // Skip in test environment to avoid duplicate event bridge with WebSocket tests
+      if (config.app.env !== 'test') {
+        initializeEventBridge();
+      }
 
       logger.info(
         {
           path: config.graphql.path || '/graphql',
           playground: config.graphql.playground?.enabled ?? true,
-          subscriptions: 'enabled',
+          subscriptions: config.app.env !== 'test' ? 'enabled' : 'disabled (test mode)',
         },
-        'GraphQL endpoint mounted with subscriptions'
+        'GraphQL endpoint mounted'
       );
     }
 

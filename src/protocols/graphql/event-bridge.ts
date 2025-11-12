@@ -11,12 +11,21 @@ import { pubSubBroker } from '@infrastructure/pubsub/pubsub-broker';
 import { logger } from '@infrastructure/logging/logger';
 import type { AppEvent } from '@shared/types/event-types';
 
+// Track whether the event bridge has been initialized to prevent duplicate listeners
+let isInitialized = false;
+
 /**
  * Initialize the event bridge
  * Sets up EventBus listeners that forward events to PubSub
  */
 export function initializeEventBridge(): void {
+  if (isInitialized) {
+    logger.debug('GraphQL event bridge already initialized, skipping');
+    return;
+  }
+
   logger.info('Initializing GraphQL event bridge');
+  isInitialized = true;
 
   // Bridge user.created events
   eventBus.on('user.created', async (event: AppEvent) => {
@@ -141,6 +150,14 @@ export function initializeEventBridge(): void {
  */
 export function cleanupEventBridge(): void {
   logger.info('Cleaning up GraphQL event bridge');
+  isInitialized = false;
   // EventBus subscriptions are automatically cleaned up when the app shuts down
   // No additional cleanup needed here
+}
+
+/**
+ * Reset initialization state (for testing)
+ */
+export function resetEventBridge(): void {
+  isInitialized = false;
 }
